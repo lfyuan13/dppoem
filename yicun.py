@@ -77,17 +77,17 @@ class Word(object):
 		return self.pos
 
 
-def print_tree(node):
+def print_tree(node, level):
 	if node is None:
 		return
 	if node.getLeft() is not None:
 		for left in node.getLeft():
-			print_tree(left)
+			print_tree(left, level+1)
 	if node.getPos() not in ignored_pos:
-		print node.getWord()
+		print " "*level, node.getWord()
 	if node.getRight() is not None:
 		for right in node.getRight():
-			print_tree(right)
+			print_tree(right, level+1)
 
 
 def pop_item(li, kw, idx):
@@ -134,7 +134,7 @@ def generate_tree(dp_list=None, pos_map=None, dictionary=None):
 
 	add_node(root_node, root_tuple[0], dp_list, pos_map, root_tuple[2], dictionary)
 
-	print_tree(root_node)
+	print_tree(root_node, 0)
 
 
 
