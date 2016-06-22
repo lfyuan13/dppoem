@@ -77,7 +77,7 @@ class Word(object):
 		return self.word
 
 	def toString(self):
-		return "".join([self.word, self.pos, str(self.index), self.mode])
+		return " ".join([self.word, self.pos, str(self.index), self.mode])
 
 	def getPos(self):
 		return self.pos
@@ -143,9 +143,12 @@ class SentenceGenerator(object):
 			dp_list: dp list
 			pos_map: pos map
 		"""
-
-		node_tmp = Word(pos=pos_map[word], word=word, index=dictionary[word])
-		node.add(relation=relat, word=node_tmp)
+		node_tmp = None
+		if pos_map[word] in ignored_pos:
+			node_tmp = node
+		else:
+			node_tmp = Word(pos=pos_map[word], word=word, index=dictionary[word])
+			node.add(relation=relat, word=node_tmp)
 
 		res = pop_item(dp_list, word, 1)
 		if res is None or len(res) ==0:
@@ -153,8 +156,8 @@ class SentenceGenerator(object):
 		else:
 			for item in res:
 				# 这里对不需要的字进行过滤
-				if pos_map[item[0]] in ignored_pos:
-					continue
+				# if pos_map[item[0]] in ignored_pos:
+				# 	continue
 				if item[2] in child_relation:
 					self.add_node(node_tmp, item[0], dp_list, pos_map, item[2], dictionary)
 				elif item[2] in brother_relation:
@@ -189,13 +192,13 @@ class SentenceGenerator(object):
 		if node.getLeft() is not None:
 			for left in node.getLeft():
 				self.generate_graph(left, level+1)
-		if node.getPos() not in ignored_pos:
-			if node.getWord() == "-1":
-				pass
-			else:
+		# if node.getPos() not in ignored_pos:
+		if node.getWord() == "-1":
+			pass
+		else:
 
-				self.graph.add_node(node.getWord(), node.getPos(), node.getMode())
-				print " "*level, node.toString()
+			self.graph.add_node(node.getWord(), node.getPos(), node.getMode())
+			print " "*level, node.toString()
 		if node.getRight() is not None:
 			for right in node.getRight():
 				self.generate_graph(right, level+1)
@@ -239,8 +242,9 @@ def generate(sent):
 	sg.generate(sent)
 
 if __name__ == '__main__':
-	generate("梅花的色，艳丽而不妖")
+	# generate("梅花的色，艳丽而不妖")
 	generate("那花白里透红，花瓣润滑透明，像一颗颗价值不菲的水晶。")
+	# generate("梅花那顽强不屈的精神却更令我赞叹")
 
 
 # generate1("那花白里透红，花瓣润滑透明，像一颗颗价值不菲的水晶。")
