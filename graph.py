@@ -49,6 +49,8 @@ class Graph(object):
 	def __init__(self):
 		self.root = None
 		self.cur = []  # 这是一个等待连接的节点(GraphNode)列表
+		self.start_list = []
+
 
 	def add_node(self, words, pos, mode):
 		pre = self.cur
@@ -56,6 +58,8 @@ class Graph(object):
 		tmp_node = None
 		for word in words:
 			node = GraphNode(word, pos, mode)
+			if mode == START:
+				self.start_list.append(node)
 			if self.root is None:
 				self.root = node  # init self node
 			self.cur.append(node)
@@ -83,6 +87,8 @@ class Graph(object):
 			result.append(node)
 			next_list = node.get_next_list()
 			if len(next_list)==0 or node.is_end():
+				if length == -1:
+					print_result(result)
 				if len(result) == length:
 					print_result(result)
 
@@ -91,8 +97,12 @@ class Graph(object):
 				# result.append(next_node)
 				iterate(next_node, result)
 				result.pop()
+		for nd in self.start_list:
+			iterate(nd, [])
+		# iterate(self.root, [])
 
-		iterate(self.root, [])
+
+
 
 if __name__ == "__main__":
 	graph = Graph()
