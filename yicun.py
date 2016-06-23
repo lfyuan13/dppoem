@@ -21,17 +21,6 @@ def analyze(text, pattern='dp'):
 	return content.decode('utf8')
 
 
-def filter1(text):
-	return re.sub('<[^>]+>', '', text)
-
-
-def filter2(text, word):
-	if word in text:
-		return True
-	else:
-		return False
-
-
 class Word(object):
 	def __init__(self, pos="", word="", is_root=False, index=0):
 		"""
@@ -254,23 +243,6 @@ if __name__ == '__main__':
 
 # generate1("梅花乃是岁寒三友中的领头羊，它生性坚毅、不服输")
 # generate1("梅花之所以香气袭人，是因为他不畏寒冷")
-# kw = u'梅花'
-# url = "http://www.gkstk.com/article/1383483811.html"
-# content = urllib2.urlopen(url)
-# text = ""
-# for line in content:
-# 	text += line
-# fout = open('test.txt', 'w+')
 
-# text = text.decode('GBK').lower()
-
-# paras = [ filter1(p)  for p in re.split(u'<p[^>]+>', text) if filter2(p, kw)]
-# print "size:", len(paras)
-# text = "\n".join(paras)
-# fout.write(text.encode('utf8'))
-# fout.close()
-# print text.encode('utf8')
-
-# content.close()
 
 
