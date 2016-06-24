@@ -29,7 +29,7 @@ class Analyzer(object):
 							self.term_inner_relation[k] = 0
 						self.term_inner_relation[k] += 1
 						pre_word = word
-				k = "_".join([pre_term, term])
+				k = "_".join([pre_term[-1], term[0]])
 				if not self.term_outer_relation.has_key(k):
 					self.term_outer_relation[k] = 0
 				self.term_outer_relation[k] += 1
@@ -46,10 +46,10 @@ class Analyzer(object):
 		def write(data, file_name):
 			with open(file_name, 'w+') as fout:
 				for k, v in data.items():
-					line = k + "\t" + str(v)
+					line = k + "\t" + str(v) + "\n"
 					fout.write(line.encode("utf8"))
-		write(self.term_outer_relation, inner_file_name)
-		write(self.term_inner_relation, outer_file_name)
+		write(self.term_outer_relation, outer_file_name)
+		write(self.term_inner_relation, inner_file_name)
 
 def read_in(file_name):
 	res = []
@@ -68,11 +68,13 @@ def read_in(file_name):
 
 if __name__ == '__main__':
 	stop_words = [
-	u"的", u"啊", u"那", u"这", u"那个", u"这个"
+	u"的", u"啊", u"那", u"这", u"那个", u"这个", u"得"
 	]
 	corp = []
-	corp += read_in("isoverseas0.txt")
-	corp += read_in("isoverseas1.txt")
+	# corp += read_in("isoverseas0.txt")
+	# corp += read_in("isoverseas1.txt")
+	corp.append("今天的天气不错啊")
+	corp.append("明天我就要去世纪公园玩")
 	a = Analyzer( stop_words)
 	a.parse(corp)
 	a.save("term_inner_relation.txt", "term_outer_relation.txt")

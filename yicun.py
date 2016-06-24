@@ -1,10 +1,12 @@
 # encoding:utf8
-import sys
+
 import time
 import re
 import urllib2
 from graph import Graph, GraphNode
 from utils import pop_item
+from dao.language_model import LanguageModel
+import jieba
 
 
 child_relation = {"SBV", "VOB", "ATT", "ADV"}
@@ -168,7 +170,7 @@ class SentenceGenerator(object):
 		
 		self.generate_graph(root_node, 0)
 		print "build tree ok..."
-		self.graph.take_all(7)
+		return self.graph.take_all(7)
 
 
 	def generate_graph(self, node, level):
@@ -223,18 +225,38 @@ class SentenceGenerator(object):
 			w1, p1 = item.split("_")
 			pos_map[w1] = p1
 		print "pos:", pos_map
-		self.generate_tree(dp_list2, pos_map, dictionary)
+		return self.generate_tree(dp_list2, pos_map, dictionary)
 	
 
 def generate(sent):
 	sg = SentenceGenerator()
-	sg.generate(sent)
+	return sg.generate(sent)
 
 if __name__ == '__main__':
-	# generate("梅花的色，艳丽而不妖")
-	# generate("那花白里透红，花瓣润滑透明，像一颗颗价值不菲的水晶。")
+	# result = generate("梅花的色，艳丽而不妖")
+	result = generate("那花白里透红，花瓣润滑透明，像一颗颗价值不菲的水晶。")
 	# generate("梅花那顽强不屈的精神却更令我赞叹")
-	generate("梅花在中华传统文化中象征着傲骨，高洁")
+	# generate("梅花在中华传统文化中象征着傲骨，高洁")
+	lm = LanguageModel()
+	res = []
+	punish_weight = 0.1
+	for sentence in result:
+		score = 0.0
+		pre_term = "^"
+		cut_res = jieba.cut(sentence, cut_all=False)
+		for term in cut_res:
+			if len(term) > 1:
+				pre_word = term[0]
+				for word in term[1:]:
+					score += lm.get_score(pre_word, word, True)
+			score += lm.get_score(pre_term[-1], term[0], False)
+			pre_term = term
+		res.append((sentence, score))
+	res.sort(key=lambda k:k[1], reverse=True)
+
+	for sent, score in res:
+		print sent, score
+
 
 # generate1("那花白里透红，花瓣润滑透明，像一颗颗价值不菲的水晶。")
 # generate1("梅花的色，艳丽而不妖")

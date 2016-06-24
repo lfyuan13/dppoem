@@ -50,6 +50,7 @@ class Graph(object):
 		self.root = None
 		self.cur = []  # 这是一个等待连接的节点(GraphNode)列表
 		self.start_list = []
+		self.result = []
 
 
 	def add_node(self, words, pos, mode):
@@ -77,8 +78,11 @@ class Graph(object):
 			计算所有的可能句子组合
 		"""
 		def print_result(res):
+			sent = ""
 			for node in res:
+				sent += node.get_word()
 				print node.get_word(),"->",
+			self.result.append(sent)
 			print len(res),""
 
 		def iterate(node, result):
@@ -97,9 +101,11 @@ class Graph(object):
 				# result.append(next_node)
 				iterate(next_node, result)
 				result.pop()
+		self.result = []
 		for nd in self.start_list:
 			iterate(nd, [])
 		# iterate(self.root, [])
+		return self.result
 
 
 
